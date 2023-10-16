@@ -1,12 +1,48 @@
 import 'package:app_movie/models/movie.dart';
 import 'package:flutter/material.dart';
 
-class MovieSlaider extends StatelessWidget {
+class MovieSlaider extends StatefulWidget {
 
   final List<Movie>  movies;
   final String? title;
+  final Function onNextPage;
 
-  const MovieSlaider({Key? key, required this.movies, this.title}) : super(key: key);
+  const MovieSlaider({Key? key, required this.movies, this.title, required this.onNextPage}) : super(key: key);
+
+  @override
+  State<MovieSlaider> createState() => _MovieSlaiderState();
+}
+
+class _MovieSlaiderState extends State<MovieSlaider> {
+
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    scrollController.addListener(() { 
+
+      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 500) {
+
+          widget.onNextPage();
+        
+      }
+
+    });
+
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +53,11 @@ class MovieSlaider extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          if(title != null)
+          if(widget.title != null)
              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  title!,
+                  widget.title!, 
                   style:const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -30,7 +66,7 @@ class MovieSlaider extends StatelessWidget {
 
 
           Expanded(
-            child: ListView.builder(scrollDirection: Axis.horizontal ,itemCount: movies.length, itemBuilder:(context, index) =>  _MoviePoster( movies[index] ),),
+            child: ListView.builder(controller: scrollController,scrollDirection: Axis.horizontal ,itemCount: widget.movies.length, itemBuilder:(context, index) =>  _MoviePoster( widget.movies[index] ),),
           )
         ],
       ),
