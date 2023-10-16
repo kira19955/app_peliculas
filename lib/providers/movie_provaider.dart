@@ -2,36 +2,58 @@ import 'package:app_movie/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-
-class MovieProvaider extends ChangeNotifier{
-
+class MovieProvaider extends ChangeNotifier {
   final String _apikey = '9e2f3fef48c3c418c135e5fce778acb5';
   final String _baseurl = "api.themoviedb.org";
   final String _language = 'es-ES';
 
-  List<Movie> onDisplayMovies=[];
+  List<Movie> onDisplayMovies = [];
+  List<Movie> popularMovies = [];
+  int _popularPage = 0;
 
-  MovieProvaider(){
+  MovieProvaider() {
     print("inicializado");
 
-     getOnDisplay();
+    getOnDisplay();
+    getPopularMovies();
+  }
+
+  Future<String> _getJsonData(String endpoint, [int page = 1] ) async {
+
+
+    var url = Uri.https(_baseurl, endpoint,
+        {'api_key': _apikey, 'language': _language, 'page': "$page" });
+
+    // Await the http get response, then decode the json-formatted response.
+    final response = await http.get(url);
+    return response.body;
+
+
+  }
+
+  //meotodo
+  getOnDisplay() async {
+    
+    final jsonData = await _getJsonData('3/movie/now_playing');
+    final nowPlayingResponse = NowplayinREsponse.fromJson(jsonData);
+
+    onDisplayMovies = nowPlayingResponse.results;
+    notifyListeners();
+  }
+
+  
+  getPopularMovies() async {
+    _popularPage ++;
+
+    final jsonData = await _getJsonData('3/movie/popular', _popularPage);
+    final popularResponse = PopularResponse.fromJson(jsonData);
+
+    popularMovies = [...popularMovies, ...popularResponse.results];
+    print("********************************************");
+    print(popularMovies[0]);
+    notifyListeners();
   }
 
 
-  //meotodo 
-  getOnDisplay() async{
-    var url = Uri.https(_baseurl, '3/movie/now_playing', {
-      'api_key': _apikey,
-      'language' : _language,
-      'page': '1'
-    });
 
-  // Await the http get response, then decode the json-formatted response.
-  final response = await http.get(url);
-  final nowPlayingResponse = NowplayinREsponse.fromJson(response.body);
-
-  onDisplayMovies = nowPlayingResponse.results;
-  notifyListeners();
 }
-}
-
