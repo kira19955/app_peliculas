@@ -80,3 +80,4 @@ class _MoviePoster extends StatelessWidget {
               );
   }
 }
+
