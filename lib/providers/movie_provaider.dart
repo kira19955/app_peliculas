@@ -9,6 +9,9 @@ class MovieProvaider extends ChangeNotifier {
 
   List<Movie> onDisplayMovies = [];
   List<Movie> popularMovies = [];
+
+  Map<int, List<Cast>> movieCast = {};
+
   int _popularPage = 0;
 
   MovieProvaider() {
@@ -54,6 +57,19 @@ class MovieProvaider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<List<Cast>> getMovieCast(int movie_id) async{
+
+    if(movieCast.containsKey(movie_id)) return movieCast[movie_id]!;
+
+    print("Pidiendo info de los actores");
+
+    final jsonData = await _getJsonData('3/movie/$movie_id/credits');
+    final credictResponse = CredictResponse.fromJson(jsonData);
+    
+    movieCast[movie_id] = credictResponse.cast;
+
+    return credictResponse.cast;
+  }
 
 
 }
