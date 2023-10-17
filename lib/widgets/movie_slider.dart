@@ -1,4 +1,4 @@
-import 'package:app_movie/models/movie.dart';
+import 'package:app_movie/models/models.dart';
 import 'package:flutter/material.dart';
 
 class MovieSlaider extends StatefulWidget {
@@ -92,7 +92,7 @@ class _MoviePoster extends StatelessWidget {
                   children: [
 
                     GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, 'detail', arguments: 'movie-instance'),
+                      onTap: () => Navigator.pushNamed(context, 'detail', arguments: movies),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: FadeInImage(placeholder:const  AssetImage('assets/no-image.jpg'),
