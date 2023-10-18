@@ -24,7 +24,7 @@ class MovieProvaider extends ChangeNotifier {
   Future<String> _getJsonData(String endpoint, [int page = 1] ) async {
 
 
-    var url = Uri.https(_baseurl, endpoint,
+    final url = Uri.https(_baseurl, endpoint,
         {'api_key': _apikey, 'language': _language, 'page': "$page" });
 
     // Await the http get response, then decode the json-formatted response.
@@ -69,6 +69,23 @@ class MovieProvaider extends ChangeNotifier {
     movieCast[movie_id] = credictResponse.cast;
 
     return credictResponse.cast;
+  }
+
+
+  Future<List<Movie>> searchMovie(String query) async {
+
+    final url = Uri.https(_baseurl, "3/search/movie",
+        {'api_key': _apikey, 'language': _language, 'query': query });
+
+        final response = await http.get(url);
+        final searchResponse = SearchMovieResponso.fromJson(response.body);
+        print(searchResponse.results);
+
+        return searchResponse.results;
+
+
+
+
   }
 
 
